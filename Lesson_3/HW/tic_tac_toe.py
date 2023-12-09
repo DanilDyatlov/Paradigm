@@ -1,6 +1,6 @@
 """Задаем параметры поля"""
 board_size = 3
-board = list(range(1, 10))
+board_tic_tac_toe = list(range(1, 10))
 
 
 def draw_board(board):
@@ -13,80 +13,98 @@ def draw_board(board):
         print("-" * 13)
 
 
-def take_input(player_token):
+def take_input(player_chip):
     """
     Метод для получения ввода от пользователя
     Вводим переменную valid = False и цикл while.
     Цикл будет выполняться до тех пор, пока valid = True
     """
-    valid = False
-    while not valid:
-        player_answer = input("Куда поставим " + player_token + "? ")
-
-        try:
-            player_answer = int(player_answer)
-            """
-            Проверка на ввод. Если ввели не число, а букву. try - если попытаются ввести букву
-            """
-        except ValueError:
-            print("Некорректный ввод. Вы уверены, что ввели число?")
+    while True:
+        # Бесконечный цикл
+        """
+        Просим ввести значения. Если этих значение нет в строке "123456789" - пишем что не верно 
+        и просим ввести заново.
+        И запускаем код заново с помощью continue
+        """
+        value = input("Ходит " + player_chip + ". Куда поставим ?: ")
+        if not (value in "123456789"):
+            print("Неверный ввод. Введите значения от 1 до 9")
             continue
+        """
+        Превращаем введенный символ в число и проверяем свободна ли клетка.
+        Для этого проверяем строку str(board[value - 1]) in "XO" есть ли там "XO". если есть говорим об этом игрокам
+        И запускаем код заново с помощью continue
+        """
+        value = int(value)
+        if str(board_tic_tac_toe[value - 1]) in "XO":
+            print("Клетка занята. Выберите другое место")
+            continue
+        """
+        Если все условия соблюдаются, в ячейку будет вписан знак, которым играем пользователь.
+        player_chip это Х или О
+        """
+        board_tic_tac_toe[value - 1] = player_chip
+        break
 
-        if 1 <= player_answer <= 9:
-            if str(board[player_answer - 1]) not in "XO":
-                board[player_answer - 1] = player_token
-                valid = True
-            else:
-                print("Эта клетка уже занята!")
-        else:
-            print("Некорректный ввод. Введите число от 1 до 9.")
 
+def check_win(board_tic_tac_toe):
 
-def check_win(board):
     """
-    Определили выигрышные комбинации. Если сходится
+    Определили выигрышные комбинации
     """
     win_combination = (
         (0, 1, 2), (3, 4, 5), (6, 7, 8),  # горизонтальные линии
         (0, 3, 6), (1, 4, 7), (2, 5, 8),  # вертикальные линии
         (0, 4, 8), (2, 4, 6)  # диагональные линии
     )
+    """
+        Для каждого элемента в массиве. Обращаемся к каждому элементу в картеже.
+        Если условия соблюдается, возвращаем выигрышную позицию (board[each[0]]).  
+        
+    """
     for each in win_combination:
-        if board[each[0]] == board[each[1]] == board[each[2]]:
-            return board[each[0]]
+        if board_tic_tac_toe[each[0]] == board_tic_tac_toe[each[1]] == board_tic_tac_toe[each[2]]:
+            return board_tic_tac_toe[each[0]]
     return False
 
 
 def main(board):
     counter = 0
-    win = False
-    while not win:
+    while True:
+
+        # Бесконечный цикл
         """
+        Используем бесконечный цикл.
         Запускаем отрисовку доски и определяем кто ходит первый.
         После хода меняем очередность.
         Цикл будет выполняться, до тех пор пока win не будет True
         """
         draw_board(board)
+        """
+        Проверяем кто ходит первый. Значение counter можно изменить для смены игрока 
+        """
         if counter % 2 == 0:
             take_input("X")
         else:
             take_input("O")
-        counter += 1
 
-        tmp = check_win(board)
         """
-        Сюда передается выигрышное значение. 
+        Сюда передается выигрышное значение
         """
-        if tmp:
-            print(tmp, "выиграл!")
-            win = True
-            break
+        if counter > 3:
+            winner = check_win(board)
+            if winner:
+                draw_board(board)
+                print(winner, "выиграл!")
+                break
+
+        counter += 1
         if counter == 9:
+            draw_board(board)
             print("Ничья!")
             break
-    draw_board(board)
 
 
-main(board)
+main(board_tic_tac_toe)
 
 input("Нажмите Enter для выхода!")
