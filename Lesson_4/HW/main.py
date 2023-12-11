@@ -36,11 +36,13 @@ def pearson_correlations(array_x, array_y):
     float( len(array_x) * len(array_y)) то всегда выводит -0.0
     После производим деление на корень
     """
-    variance_x = sum([(xi - half_x) ** 2 for xi in array_x]) / float(len(array_x) - 1)
-    variance_y = sum([(yi - half_y) ** 2 for yi in array_y]) / float(len(array_y) - 1)
 
     covariance = sum([(xi - half_x) * (yi - half_y) for xi, yi in zip(array_x, array_y)]) / float(
         len(array_x) * len(array_y))
+
+    variance_x = sum([(xi - half_x) ** 2 for xi in array_x]) / float(len(array_x) - 1)
+    variance_y = sum([(yi - half_y) ** 2 for yi in array_y]) / float(len(array_y) - 1)
+
     correlation = covariance / (math.sqrt(variance_x * variance_y))
     return correlation
 
